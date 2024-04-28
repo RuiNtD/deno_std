@@ -1,6 +1,5 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 
-import { blue, red, yellow } from "../fmt/colors.ts";
 import { walk } from "../fs/walk.ts";
 import ts from "npm:typescript";
 const {
@@ -8,6 +7,7 @@ const {
   ScriptTarget,
   SyntaxKind,
 } = ts;
+import { style } from "../cli/style.ts";
 
 const EXTENSIONS = [".mjs", ".js", ".ts", ".md"];
 const EXCLUDED_PATHS = [
@@ -53,15 +53,14 @@ function checkImportStatements(
 
     if (isRelative || !isInternal) {
       console.log(
-        yellow("Warn ") +
-          (isRelative
-            ? "relative import path"
-            : "external or incorrectly versioned dependency") +
-          ": " +
-          red(`"${importPath}"`) + " at " +
-          blue(
-            filePath.substring(ROOT_LENGTH + 1),
-          ) + yellow(":" + (lineNumber + line)),
+        style("Warn", { color: "yellow" }),
+        isRelative
+          ? "relative import path:"
+          : "external or incorrectly versioned dependency:",
+        style(`"${importPath}"`, { color: "red" }),
+        "at",
+        style(filePath.substring(ROOT_LENGTH + 1), { color: "blue" }),
+        style(":" + lineNumber + line, { color: "yellow" }),
       );
 
       shouldFail = true;

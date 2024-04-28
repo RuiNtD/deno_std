@@ -3,8 +3,8 @@
 import { walk } from "../fs/walk.ts";
 import { relative } from "../path/relative.ts";
 import { dirname } from "../path/dirname.ts";
-import * as colors from "../fmt/colors.ts";
 import ts from "npm:typescript";
+import { style } from "../cli/style.ts";
 
 const ROOT = new URL("../", import.meta.url);
 const FAIL_FAST = Deno.args.includes("--fail-fast");
@@ -56,9 +56,8 @@ for await (
       .replaceAll("\\", "/");
     if (!exportSpecifiers.has(relativeSpecifier)) {
       console.warn(
-        `${
-          colors.yellow("Warn")
-        } ${modFilePath} does not export '${relativeSpecifier}'.`,
+        ...style("Warn", { color: "yellow" }),
+        `${modFilePath} does not export '${relativeSpecifier}'.`,
       );
       shouldFail = true;
       if (FAIL_FAST) Deno.exit(1);
