@@ -107,9 +107,11 @@ export async function assertRejects<E extends Error = Error>(
       }
       assertIsError(
         error,
-        ErrorClass,
-        msgIncludes,
-        msg,
+        {
+          errorClass: ErrorClass,
+          msgMatches: msgIncludes,
+          msg,
+        },
       );
     }
     err = error;

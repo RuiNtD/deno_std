@@ -6,7 +6,7 @@ class AnotherCustomError extends Error {}
 
 Deno.test("assertIsError() throws when given value isn't error", () => {
   assertThrows(
-    () => assertIsError("Panic!", undefined, "Panic!"),
+    () => assertIsError("Panic!", { msgMatches: "Panic!" }),
     AssertionError,
     `Expected "error" to be an Error object.`,
   );
@@ -25,13 +25,23 @@ Deno.test("assertIsError() throws when given value isn't error", () => {
 });
 
 Deno.test("assertIsError() allows subclass of Error", () => {
-  assertIsError(new AssertionError("Fail!"), Error, "Fail!");
+  assertIsError(new AssertionError("Fail!"), {
+    errorClass: Error,
+    msgMatches: "Fail!",
+  });
 });
 
 Deno.test("assertIsError() allows custom error", () => {
-  assertIsError(new CustomError("failed"), CustomError, "fail");
+  assertIsError(new CustomError("failed"), {
+    errorClass: CustomError,
+    msgMatches: "fail",
+  });
   assertThrows(
-    () => assertIsError(new AnotherCustomError("failed"), CustomError, "fail"),
+    () =>
+      assertIsError(new AnotherCustomError("failed"), {
+        errorClass: CustomError,
+        msgMatches: "fail",
+      }),
     AssertionError,
     'Expected error to be instance of "CustomError", but was "AnotherCustomError".',
   );
@@ -42,8 +52,10 @@ Deno.test("assertIsError() throws with message diff containing double quotes", (
     () =>
       assertIsError(
         new CustomError('error with "double quotes"'),
-        CustomError,
-        'doesn\'t include "this message"',
+        {
+          errorClass: CustomError,
+          msgMatches: 'doesn\'t include "this message"',
+        },
       ),
     AssertionError,
     `Expected error message to include "doesn't include \\"this message\\"", but got "error with \\"double quotes\\"".`,
@@ -51,9 +63,16 @@ Deno.test("assertIsError() throws with message diff containing double quotes", (
 });
 
 Deno.test("assertIsError() throws when given value doesn't match regex ", () => {
-  assertIsError(new AssertionError("Regex test"), Error, /ege/);
+  assertIsError(new AssertionError("Regex test"), {
+    errorClass: Error,
+    msgMatches: /ege/,
+  });
   assertThrows(
-    () => assertIsError(new AssertionError("Regex test"), Error, /egg/),
+    () =>
+      assertIsError(new AssertionError("Regex test"), {
+        errorClass: Error,
+        msgMatches: /egg/,
+      }),
     Error,
     `Expected error message to include /egg/, but got "Regex test"`,
   );
@@ -64,9 +83,11 @@ Deno.test("assertIsError() throws with custom message", () => {
     () =>
       assertIsError(
         new CustomError("failed"),
-        AnotherCustomError,
-        "fail",
-        "CUSTOM MESSAGE",
+        {
+          errorClass: AnotherCustomError,
+          msgMatches: "fail",
+          msg: "CUSTOM MESSAGE",
+        },
       ),
     AssertionError,
     'Expected error to be instance of "AnotherCustomError", but was "CustomError": CUSTOM MESSAGE',

@@ -96,9 +96,11 @@ export function assertThrows<E extends Error = Error>(
       }
       assertIsError(
         error,
-        ErrorClass,
-        msgIncludes,
-        msg,
+        {
+          errorClass: ErrorClass,
+          msgMatches: msgIncludes,
+          msg,
+        },
       );
     }
     err = error;
