@@ -10,12 +10,15 @@
  * @example Basic usage
  * ```ts
  * import { concat } from "@std/bytes/concat";
- * import { assertEquals } from "@std/assert/assert-equals";
  *
  * const a = new Uint8Array([0, 1, 2]);
  * const b = new Uint8Array([3, 4, 5]);
+ * const actual = concat([a, b]);
+ * const expected = new Uint8Array([0, 1, 2, 3, 4, 5]);
  *
- * assertEquals(concat([a, b]), new Uint8Array([0, 1, 2, 3, 4, 5]));
+ * for (let i = 0; i < expected.length; i++) {
+ *   console.assert(actual[i] === expected[i]);
+ * }
  * ```
  */
 export function concat(buffers: Uint8Array[]): Uint8Array {

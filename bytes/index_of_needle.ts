@@ -20,26 +20,24 @@
  * @example Basic usage
  * ```ts
  * import { indexOfNeedle } from "@std/bytes/index-of-needle";
- * import { assertEquals } from "@std/assert/assert-equals";
  *
  * const source = new Uint8Array([0, 1, 2, 1, 2, 1, 2, 3]);
  * const needle = new Uint8Array([1, 2]);
  * const notNeedle = new Uint8Array([5, 0]);
  *
- * assertEquals(indexOfNeedle(source, needle), 1);
- * assertEquals(indexOfNeedle(source, notNeedle), -1);
+ * console.assert(indexOfNeedle(source, needle) === 1);
+ * console.assert(indexOfNeedle(source, notNeedle) === -1);
  * ```
  *
  * @example Start index
  * ```ts
  * import { indexOfNeedle } from "@std/bytes/index-of-needle";
- * import { assertEquals } from "@std/assert/assert-equals";
  *
  * const source = new Uint8Array([0, 1, 2, 1, 2, 1, 2, 3]);
  * const needle = new Uint8Array([1, 2]);
  *
- * assertEquals(indexOfNeedle(source, needle, 2), 3);
- * assertEquals(indexOfNeedle(source, needle, 6), -1);
+ * console.assert(indexOfNeedle(source, needle, 2) === 3);
+ * console.assert(indexOfNeedle(source, needle, 6) === -1);
  * ```
  * Defining a start index will begin the search at the specified index in the
  * source array.

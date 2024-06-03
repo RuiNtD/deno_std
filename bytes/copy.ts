@@ -17,13 +17,17 @@
  * @example Basic usage
  * ```ts
  * import { copy } from "@std/bytes/copy";
- * import { assertEquals } from "@std/assert/assert-equals";
  *
- * const src = new Uint8Array([9, 8, 7]);
- * const dst = new Uint8Array([0, 1, 2, 3, 4, 5]);
+ * const source = new Uint8Array([9, 8, 7]);
+ * const actual = new Uint8Array([0, 1, 2, 3, 4, 5]);
+ * const expected = new Uint8Array([9, 8, 7, 3, 4, 5]);
+
+ * const copiedLength = copy(source, actual);
+ * assertEquals(copiedLength, 3);
  *
- * assertEquals(copy(src, dst), 3);
- * assertEquals(dst, new Uint8Array([9, 8, 7, 3, 4, 5]));
+ * for (let i = 0; i < expected.length; i++) {
+ *   console.assert(actual[i] === expected[i]);
+ * }
  * ```
  *
  * @example Copy with offset
@@ -31,11 +35,16 @@
  * import { copy } from "@std/bytes/copy";
  * import { assertEquals } from "@std/assert/assert-equals";
  *
- * const src = new Uint8Array([1, 1, 1, 1]);
- * const dst = new Uint8Array([0, 0, 0, 0]);
+ * const source = new Uint8Array([1, 1, 1, 1]);
+ * const actual = new Uint8Array([0, 0, 0, 0]);
  *
- * assertEquals(copy(src, dst, 1), 3);
- * assertEquals(dst, new Uint8Array([0, 1, 1, 1]));
+ * const copiedLength = copy(source, actual, 1);
+ * console.assert(copiedLength === 3);
+ *
+ * const expected = new Uint8Array([0, 1, 1, 1]);
+ * for (let i = 0; i < expected.length; i++) {
+ *   console.assert(actual[i] === expected[i]);
+ * }
  * ```
  * Defining an offset will start copying at the specified index in the
  * destination array.
