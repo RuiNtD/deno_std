@@ -10,6 +10,13 @@ import { CHAR_COLON } from "../_common/constants.ts";
 import { stripTrailingSeparators } from "../_common/strip_trailing_separators.ts";
 import { isPathSeparator, isWindowsDeviceRoot } from "./_util.ts";
 
+function getLastSegment(path: string, separator: string): string {
+  if (path === "") return "";
+  const delimter = new RegExp(`${separator}+`);
+  const segments = path.split(delimter).filter((segment) => segment !== "");
+  return segments.length === 0 ? "\\" : segments.at(-1)!;
+}
+
 /**
  * Return the last portion of a `path`.
  * Trailing directory separators are ignored, and optional suffix is removed.
@@ -43,6 +50,8 @@ export function basename(path: string, suffix = ""): string {
   }
 
   const lastSegment = lastPathSegment(path, isPathSeparator, start);
+  const x = getLastSegment(path.slice(start), "[\\\\/]");
+  if (lastSegment !== x) console.log({ lastSegment, x, path });
   const strippedSegment = stripTrailingSeparators(lastSegment, isPathSeparator);
   return suffix ? stripSuffix(strippedSegment, suffix) : strippedSegment;
 }

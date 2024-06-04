@@ -1,13 +1,14 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import {
-  assertArgs,
-  lastPathSegment,
-  stripSuffix,
-} from "../_common/basename.ts";
-import { stripTrailingSeparators } from "../_common/strip_trailing_separators.ts";
-import { isPosixPathSeparator } from "./_util.ts";
+import { assertArgs, stripSuffix } from "../_common/basename.ts";
+
+export function getLastSegment(path: string, separator: string): string {
+  if (path === "") return "";
+  const delimter = new RegExp(`${separator}+`);
+  const segments = path.split(delimter).filter((segment) => segment !== "");
+  return segments.length === 0 ? separator : segments.at(-1)!;
+}
 
 /**
  * Return the last portion of a `path`.
@@ -29,11 +30,7 @@ import { isPosixPathSeparator } from "./_util.ts";
  */
 export function basename(path: string, suffix = ""): string {
   assertArgs(path, suffix);
+  const lastSegment = getLastSegment(path, "/");
 
-  const lastSegment = lastPathSegment(path, isPosixPathSeparator);
-  const strippedSegment = stripTrailingSeparators(
-    lastSegment,
-    isPosixPathSeparator,
-  );
-  return suffix ? stripSuffix(strippedSegment, suffix) : strippedSegment;
+  return suffix ? stripSuffix(lastSegment, suffix) : lastSegment;
 }
