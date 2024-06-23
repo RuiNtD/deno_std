@@ -4,7 +4,7 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { type CbFunction, load, loadAll } from "./_loader/loader.ts";
+import { load } from "./_loader/loader.ts";
 import type { LoaderStateOptions } from "./_loader/loader_state.ts";
 
 export type ParseOptions = LoaderStateOptions;
@@ -17,41 +17,4 @@ export type ParseOptions = LoaderStateOptions;
  */
 export function parse(content: string, options?: ParseOptions): unknown {
   return load(content, options);
-}
-
-/**
- * Same as `parse()`, but understands multi-document sources.
- * Applies iterator to each document if specified, or returns array of documents.
- *
- * @example
- * ```ts
- * import { parseAll } from "@std/yaml/parse";
- *
- * const data = parseAll(`
- * ---
- * id: 1
- * name: Alice
- * ---
- * id: 2
- * name: Bob
- * ---
- * id: 3
- * name: Eve
- * `);
- * console.log(data);
- * // => [ { id: 1, name: "Alice" }, { id: 2, name: "Bob" }, { id: 3, name: "Eve" } ]
- * ```
- */
-export function parseAll(
-  content: string,
-  iterator: CbFunction,
-  options?: ParseOptions,
-): void;
-export function parseAll(content: string, options?: ParseOptions): unknown;
-export function parseAll(
-  content: string,
-  iterator?: CbFunction | ParseOptions,
-  options?: ParseOptions,
-): unknown {
-  return loadAll(content, iterator, options);
 }

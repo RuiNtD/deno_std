@@ -6,6 +6,4 @@
 
 export { CORE_SCHEMA } from "./core.ts";
 export { DEFAULT_SCHEMA } from "./default.ts";
-export { EXTENDED_SCHEMA } from "./extended.ts";
-export { FAILSAFE_SCHEMA } from "./failsafe.ts";
 export { JSON_SCHEMA } from "./json.ts";

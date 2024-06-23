@@ -3,10 +3,10 @@
 // Copyright 2011-2015 by Vitaly Puzrin. All rights reserved. MIT license.
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 
-import type { Schema, SchemaDefinition } from "../schema.ts";
-import { State } from "../_state.ts";
+import type { Schema } from "../schema.ts";
 import type { StyleVariant, Type } from "../type.ts";
 import type { Any, ArrayObject } from "../_utils.ts";
+import { DEFAULT_SCHEMA } from "../schema/default.ts";
 
 const { hasOwn } = Object;
 
@@ -55,8 +55,6 @@ export interface DumperStateOptions {
   flowLevel?: number;
   /** Each tag may have own set of styles.	- "tag" => "style" map. */
   styles?: ArrayObject<StyleVariant> | null;
-  /** specifies a schema to use. */
-  schema?: SchemaDefinition;
   /**
    * If true, sort keys when dumping YAML in ascending, ASCII character order.
    * If a function, use the function to sort the keys. (default: false)
@@ -87,7 +85,7 @@ export interface DumperStateOptions {
   condenseFlow?: boolean;
 }
 
-export class DumperState extends State {
+export class DumperState {
   indent: number;
   noArrayIndent: boolean;
   skipInvalid: boolean;
@@ -107,7 +105,6 @@ export class DumperState extends State {
   dump: Any;
 
   constructor({
-    schema,
     indent = 2,
     noArrayIndent = false,
     skipInvalid = false,
@@ -119,19 +116,18 @@ export class DumperState extends State {
     noCompatMode = false,
     condenseFlow = false,
   }: DumperStateOptions) {
-    super(schema);
     this.indent = Math.max(1, indent);
     this.noArrayIndent = noArrayIndent;
     this.skipInvalid = skipInvalid;
     this.flowLevel = flowLevel;
-    this.styleMap = compileStyleMap(this.schema as Schema, styles);
+    this.styleMap = compileStyleMap(DEFAULT_SCHEMA, styles);
     this.sortKeys = sortKeys;
     this.lineWidth = lineWidth;
     this.noRefs = noRefs;
     this.noCompatMode = noCompatMode;
     this.condenseFlow = condenseFlow;
 
-    this.implicitTypes = (this.schema as Schema).compiledImplicit;
-    this.explicitTypes = (this.schema as Schema).compiledExplicit;
+    this.implicitTypes = DEFAULT_SCHEMA.compiledImplicit;
+    this.explicitTypes = DEFAULT_SCHEMA.compiledExplicit;
   }
 }

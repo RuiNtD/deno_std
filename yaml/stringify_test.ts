@@ -6,8 +6,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { stringify } from "./stringify.ts";
 import { YAMLError } from "./_error.ts";
-import { DEFAULT_SCHEMA, EXTENDED_SCHEMA } from "./schema/mod.ts";
-import { Type } from "./type.ts";
 
 Deno.test({
   name: "stringify()",
@@ -98,77 +96,6 @@ Deno.test({
       YAMLError,
       "unacceptable kind of an object to dump",
     );
-  },
-});
-
-Deno.test({
-  name: "stringify() handles `!!js/*` yaml types with extended schema",
-  fn() {
-    const object = {
-      regexp: {
-        simple: /foobar/,
-        modifiers: /foobar/im,
-      },
-      undefined: undefined,
-    };
-
-    const expected = `regexp:
-  simple: !<tag:yaml.org,2002:js/regexp> /foobar/
-  modifiers: !<tag:yaml.org,2002:js/regexp> /foobar/im
-undefined: !<tag:yaml.org,2002:js/undefined> ''
-`;
-
-    assertEquals(stringify(object, { schema: EXTENDED_SCHEMA }), expected);
-  },
-});
-
-Deno.test({
-  name:
-    "stringify() throws with `!!js/function` yaml types with extended schema",
-  fn() {
-    const func = function foobar() {
-      return "hello world!";
-    };
-
-    assertThrows(
-      () => stringify({ function: func }, { schema: EXTENDED_SCHEMA }),
-    );
-  },
-});
-
-Deno.test({
-  name: "stringify() handles `!*` yaml user defined types",
-  fn() {
-    const PointYamlType = new Type("!point", {
-      kind: "sequence",
-      resolve(data) {
-        return data !== null && data?.length === 3;
-      },
-      construct(data) {
-        const [x, y, z] = data;
-        return { x, y, z };
-      },
-      predicate(object: unknown) {
-        return !!(object && typeof object === "object" && "x" in object &&
-          "y" in object && "z" in object);
-      },
-      represent(point) {
-        return [point.x, point.y, point.z];
-      },
-    });
-    const SPACE_SCHEMA = DEFAULT_SCHEMA.extend({ explicit: [PointYamlType] });
-
-    const object = {
-      point: { x: 1, y: 2, z: 3 },
-    };
-
-    const expected = `point: !<!point>${" "}
-  - 1
-  - 2
-  - 3
-`;
-
-    assertEquals(stringify(object, { schema: SPACE_SCHEMA }), expected);
   },
 });
 

@@ -4,18 +4,16 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 
 import type { YAMLError } from "../_error.ts";
-import type { Schema, SchemaDefinition, TypeMap } from "../schema.ts";
-import { State } from "../_state.ts";
+import type { TypeMap } from "../schema.ts";
 import type { Type } from "../type.ts";
 import type { Any, ArrayObject } from "../_utils.ts";
+import { DEFAULT_SCHEMA } from "../schema/default.ts";
 
 export interface LoaderStateOptions {
   legacy?: boolean;
   listener?: ((...args: Any[]) => void) | null;
   /** string to be used as a file path in error/warning messages. */
   filename?: string;
-  /** specifies a schema to use. */
-  schema?: SchemaDefinition;
   /** compatibility with JSON.parse behaviour. */
   json?: boolean;
   /** function to call on warning messages. */
@@ -25,7 +23,7 @@ export interface LoaderStateOptions {
 // deno-lint-ignore no-explicit-any
 export type ResultType = any[] | Record<string, any> | string;
 
-export class LoaderState extends State {
+export class LoaderState {
   input: string;
   documents: Any[] = [];
   length: number;
@@ -54,14 +52,12 @@ export class LoaderState extends State {
     input: string,
     {
       filename,
-      schema,
       onWarning,
       legacy = false,
       json = false,
       listener = null,
     }: LoaderStateOptions,
   ) {
-    super(schema);
     this.input = input;
     this.filename = filename;
     this.onWarning = onWarning;
@@ -69,8 +65,8 @@ export class LoaderState extends State {
     this.json = json;
     this.listener = listener;
 
-    this.implicitTypes = (this.schema as Schema).compiledImplicit;
-    this.typeMap = (this.schema as Schema).compiledTypeMap;
+    this.implicitTypes = DEFAULT_SCHEMA.compiledImplicit;
+    this.typeMap = DEFAULT_SCHEMA.compiledTypeMap;
 
     this.length = input.length;
   }

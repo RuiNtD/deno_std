@@ -1765,29 +1765,6 @@ function loadDocuments(input: string, options?: LoaderStateOptions): unknown[] {
   return state.documents;
 }
 
-export type CbFunction = (doc: unknown) => void;
-function isCbFunction(fn: unknown): fn is CbFunction {
-  return typeof fn === "function";
-}
-
-export function loadAll<T extends CbFunction | LoaderStateOptions>(
-  input: string,
-  iteratorOrOption?: T,
-  options?: LoaderStateOptions,
-): T extends CbFunction ? void : unknown[] {
-  if (!isCbFunction(iteratorOrOption)) {
-    return loadDocuments(input, iteratorOrOption as LoaderStateOptions) as Any;
-  }
-
-  const documents = loadDocuments(input, options);
-  const iterator = iteratorOrOption;
-  for (let index = 0; index < documents.length; index++) {
-    iterator(documents[index]);
-  }
-
-  return void 0 as Any;
-}
-
 export function load(input: string, options?: LoaderStateOptions): unknown {
   const documents = loadDocuments(input, options);
 
